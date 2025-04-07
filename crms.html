@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Car Rental Management System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1c1c1c, #2c3e50);
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+    header {
+      background: #2c3e50;
+      padding: 15px 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 100;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 1000px;
+    }
+    nav ul li {
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: #f0f0f0;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 5px;
+      transition: color 0.3s, transform 0.3s;
+    }
+    nav ul li a:hover {
+      color: #e67e22;
+      transform: scale(1.1);
+    }
+    nav ul li a i {
+      margin-right: 5px;
+    }
+    main {
+      padding: 40px;
+      min-height: 80vh;
+      width: 100%;
+      animation: fadeIn 0.8s ease-in;
+    }
+    section {
+      background: #333;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      opacity: 0;
+      animation: sectionFade 0.6s forwards;
+    }
+    h1, h2, h3 {
+      color: #e67e22;
+      margin-bottom: 15px;
+    }
+    /* Hero Banner */
+    .hero {
+      background: url('https://via.placeholder.com/1600x500?text=Drive+Your+Dream') no-repeat center center/cover;
+      padding: 80px 20px;
+      text-align: center;
+      border-radius: 12px;
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 3rem;
+    }
+    /* Cards */
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background: #444;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    /* Forms and Inputs */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 450px;
+    }
+    .input-group {
+      position: relative;
+    }
+    .input-group i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+    }
+    input {
+      width: 100%;
+      padding: 12px 12px 12px 35px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background: #222;
+      color: #f0f0f0;
+    }
+    input:focus {
+      border-color: #e67e22;
+      outline: none;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      background-color: #e67e22;
+      color: #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #cf711f;
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #555;
+    }
+    th {
+      background-color: #444;
+    }
+    tr:hover {
+      background-color: #3a3a3a;
+    }
+    /* Footer */
+    footer {
+      background: #2c3e50;
+      color: #f0f0f0;
+      text-align: center;
+      padding: 5px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+    }
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sectionFade {
+      to { opacity: 1; }
+    }
+    /* Responsive Design */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #f0f0f0;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: #2c3e50;
+        padding: 10px 0;
+      }
+      nav ul.show {
+        display: flex;
+      }
+      nav ul li {
+        margin: 10px 0;
+        text-align: center;
+      }
+      main {
+        padding: 20px;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+    /* Two-Column Layout for Manage Vehicles */
+    .two-column {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .two-column > div {
+      flex: 1;
+      min-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <button id="menuToggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+      <ul id="navList">
+        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#search"><i class="fas fa-search"></i> Search Vehicles</a></li>
+        <li><a href="#bookings"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+        <li><a href="#manageVehicles"><i class="fas fa-car"></i> Manage Vehicles</a></li>
+        <li><a href="#manageUsers"><i class="fas fa-users"></i> Manage Users</a></li>
+        <li><a href="#maintenance"><i class="fas fa-wrench"></i> Maintenance</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <!-- Home Section -->
+    <section id="home">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Drive with Confidence</h1>
+          <p>Premium cars for the modern man. Experience luxury and performance.</p>
+          <button onclick="location.hash='#search'"><i class="fas fa-car"></i> Browse Vehicles</button>
+        </div>
+      </div>
+      <div class="card-container">
+        <div class="card">
+          <h3><i class="fas fa-star"></i> Featured Vehicles</h3>
+          <p>Discover our curated collection of high-performance vehicles.</p>
+          <button onclick="location.hash='#search'"><i class="fas fa-eye"></i> View Details</button>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-tag"></i> Latest Offers</h3>
+          <p>Grab exclusive deals available for a limited time.</p>
+          <button onclick="alert('Check back soon!')"><i class="fas fa-info-circle"></i> Learn More</button>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+          <p>Total Vehicles: <strong id="totalVehicles">0</strong></p>
+          <p>Total Bookings: <strong id="totalBookings">0</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search Vehicles Section -->
+    <section id="search" style="display: none;">
+      <h2><i class="fas fa-search"></i> Search for Vehicles</h2>
+      <form id="searchForm">
+        <div class="input-group">
+          <i class="fas fa-map-marker-alt"></i>
+          <input type="text" id="location" name="location" placeholder="Enter location" />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="date" id="startDate" name="startDate" />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="date" id="endDate" name="endDate" />
+        </div>
+        <button type="submit"><i class="fas fa-search"></i> Search</button>
+      </form>
+      <div id="searchResults"></div>
+    </section>
+
+    <!-- Book a Car Section -->
+    <section id="book" style="display: none;">
+      <h2><i class="fas fa-car"></i> Book a Car</h2>
+      <p>Vehicle: <span id="bookVehicle"></span></p>
+      <p>Start Date: <span id="bookStartDate"></span></p>
+      <p>End Date: <span id="bookEndDate"></span></p>
+      <p>Total Cost: ₹<span id="bookTotalCost"></span></p>
+      <button id="confirmBooking"><i class="fas fa-check"></i> Confirm Booking</button>
+    </section>
+
+    <!-- Payment Section -->
+    <section id="payment" style="display: none;">
+      <h2><i class="fas fa-credit-card"></i> Make Payment</h2>
+      <form id="paymentForm">
+        <div class="input-group">
+          <i class="fas fa-credit-card"></i>
+          <input type="text" id="cardNumber" name="cardNumber" placeholder="Card Number" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="text" id="cvv" name="cvv" placeholder="CVV" required />
+        </div>
+        <button type="submit"><i class="fas fa-check"></i> Pay Now</button>
+      </form>
+    </section>
+
+    <!-- Payment Confirmation -->
+    <section id="confirmation" style="display: none;">
+      <h2><i class="fas fa-check-circle"></i> Payment Confirmation</h2>
+      <p>Your payment has been processed successfully.</p>
+      <p>Booking confirmed! Invoice generated.</p>
+    </section>
+
+    <!-- Booking History -->
+    <section id="bookings" style="display: none;">
+      <h2><i class="fas fa-calendar-check"></i> Booking History</h2>
+      <div id="bookingList">
+        <table>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Cost</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Manage Vehicles -->
+    <section id="manageVehicles" style="display: none;">
+      <h2><i class="fas fa-car"></i> Manage Vehicles</h2>
+      <div class="two-column">
+        <div>
+          <form id="addVehicleForm">
+            <div class="input-group">
+              <i class="fas fa-car"></i>
+              <input type="text" id="vehicleMake" name="make" placeholder="Vehicle make" required />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-car-side"></i>
+              <input type="text" id="vehicleModel" name="model" placeholder="Vehicle model" required />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-rupee-sign"></i>
+              <input type="number" id="vehiclePrice" name="price" placeholder="Price/Day" required />
+            </div>
+            <button type="submit"><i class="fas fa-plus"></i> Add Vehicle</button>
+          </form>
+        </div>
+        <div id="vehicleList">
+          <h3>Vehicle List</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Price/Day</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vehicleTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manage Users -->
+    <section id="manageUsers" style="display: none;">
+      <h2><i class="fas fa-users"></i> Manage Users</h2>
+      <div id="userList">
+        <p>User: user1@gmail.com</p>
+      </div>
+    </section>
+
+    <!-- Maintenance Section -->
+    <section id="maintenance" style="display: none;">
+      <h2><i class="fas fa-wrench"></i> Maintenance</h2>
+      <form id="scheduleMaintenanceForm">
+        <div class="input-group">
+          <i class="fas fa-car"></i>
+          <input type="text" id="maintenanceVehicle" name="vehicle" placeholder="Vehicle name/model" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="date" id="maintenanceDate" name="date" required />
+        </div>
+        <button type="submit"><i class="fas fa-tools"></i> Schedule</button>
+      </form>
+      <div id="maintenanceHistory">
+        <h3>Maintenance History</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="maintenanceTableBody"></tbody>
+        </table>  
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p><strong>© MADE BY JONATHON P (22BCI0285) | ADEL HANEEF (22BCT0366)</strong></p>
+  </footer>
+  <script>
+    let currentUserRole = 'user';
+    let bookings = [];
+    let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [
+      { id: 1, make: "Toyota", model: "Camry", price: 3500, status: "Available" },
+      { id: 2, make: "Honda", model: "Civic", price: 4000, status: "Available" },
+
+    ];
+    let maintenanceRecords = [];
+
+    function saveVehicles() {
+      localStorage.setItem('vehicles', JSON.stringify(vehicles));
+      document.getElementById('totalVehicles').textContent = vehicles.length;
+    }
+
+    function updateNavigation() {
+      const links = document.querySelectorAll('nav ul li a');
+      links.forEach(link => link.style.display = 'inline');
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll('main > section').forEach(section => {
+        section.style.display = section.id === sectionId ? 'block' : 'none';
+      });
+      if (sectionId === 'bookings') showBookings();
+      if (sectionId === 'manageVehicles') showVehicles();
+      if (sectionId === 'maintenance') showMaintenanceHistory();
+    }
+
+    window.addEventListener('hashchange', () => {
+      const sectionId = window.location.hash.substring(1) || 'home';
+      showSection(sectionId);
+    });
+
+    document.getElementById('searchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const results = document.getElementById('searchResults');
+      results.innerHTML = '<h3>Available Vehicles</h3>';
+      vehicles.filter(v => v.status === 'Available').forEach(v => {
+        results.innerHTML += `
+          <div class="vehicle-item">
+            <span>${v.make} ${v.model} - ₹${v.price}/day</span>
+            <button onclick="bookVehicle(${v.id}, '${v.make} ${v.model}', ${v.price})"><i class="fas fa-car"></i> Book</button>
+          </div>
+        `;
+      });
+    });
+
+    function bookVehicle(id, name, price) {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      const days = (new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24);
+      const total = days * price;
+      document.getElementById('bookVehicle').textContent = name;
+      document.getElementById('bookStartDate').textContent = start;
+      document.getElementById('bookEndDate').textContent = end;
+      document.getElementById('bookTotalCost').textContent = total || 0;
+      showSection('book');
+      window.currentVehicleId = id;
+    }
+
+    document.getElementById('confirmBooking').addEventListener('click', () => {
+      showSection('payment');
+    });
+
+    document.getElementById('paymentForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const total = document.getElementById('bookTotalCost').textContent;
+      alert(`Payment of ₹${total} processed successfully`);
+      bookings.push({
+        vehicle: document.getElementById('bookVehicle').textContent,
+        start: document.getElementById('bookStartDate').textContent,
+        end: document.getElementById('bookEndDate').textContent,
+        total: total
+      });
+      vehicles.find(v => v.id === window.currentVehicleId).status = 'Booked';
+      saveVehicles();
+      document.getElementById('totalBookings').textContent = bookings.length;
+      showSection('confirmation');
+    });
+
+    function showBookings() {
+      const tbody = document.getElementById('bookingTableBody');
+      tbody.innerHTML = '';
+      bookings.forEach((b, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${b.vehicle}</td>
+          <td>${b.start}</td>
+          <td>${b.end}</td>
+          <td>₹${b.total}</td>
+          <td><button onclick="cancelBooking(${i})"><i class="fas fa-times"></i> Cancel</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function cancelBooking(index) {
+      const booking = bookings.splice(index, 1)[0];
+      alert(`Booking for ${booking.vehicle} cancelled`);
+      showBookings();
+      document.getElementById('totalBookings').textContent = bookings.length;
+    }
+
+    document.getElementById('addVehicleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const vehicle = {
+        id: vehicles.length ? vehicles[vehicles.length - 1].id + 1 : 1,
+        make: document.getElementById('vehicleMake').value,
+        model: document.getElementById('vehicleModel').value,
+        price: parseInt(document.getElementById('vehiclePrice').value),
+        status: 'Available'
+      };
+      vehicles.push(vehicle);
+      saveVehicles();
+      alert('Vehicle added successfully');
+      showVehicles();
+    });
+
+    function showVehicles() {
+      const tbody = document.getElementById('vehicleTableBody');
+      tbody.innerHTML = '';
+      vehicles.forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${v.make}</td>
+          <td>${v.model}</td>
+          <td>₹${v.price}</td>
+          <td>${v.status}</td>
+          <td>
+            <button onclick="removeVehicle(${v.id})"><i class="fas fa-trash"></i> Remove</button>
+            <button onclick="updateVehicleStatus(${v.id})"><i class="fas fa-sync"></i> Toggle</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function removeVehicle(id) {
+      vehicles = vehicles.filter(v => v.id !== id);
+      saveVehicles();
+      showVehicles();
+    }
+
+    function updateVehicleStatus(id) {
+      const v = vehicles.find(v => v.id === id);
+      v.status = v.status === 'Available' ? 'Maintenance' : 'Available';
+      saveVehicles();
+      showVehicles();
+    }
+
+    document.getElementById('scheduleMaintenanceForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const record = {
+        vehicle: document.getElementById('maintenanceVehicle').value,
+        date: document.getElementById('maintenanceDate').value
+      };
+      maintenanceRecords.push(record);
+      alert('Maintenance scheduled');
+      showMaintenanceHistory();
+    });
+
+    function showMaintenanceHistory() {
+      const tbody = document.getElementById('maintenanceTableBody');
+      tbody.innerHTML = '';
+      maintenanceRecords.forEach(r => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${r.vehicle}</td>
+          <td>${r.date}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Hamburger Menu Toggle
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('navList').classList.toggle('show');
+    });
+
+    document.querySelectorAll('#navList a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navList').classList.remove('show');
+      });
+    });
+
+    // Initial Setup
+    updateNavigation();
+    saveVehicles();
+    showSection(window.location.hash.substring(1) || 'home');
+    document.getElementById('totalBookings').textContent = bookings.length;
+  </script>
+</body>
+</html>
